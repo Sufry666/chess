@@ -11,12 +11,20 @@ class king(Piece):
         super().__init__(color, name, position)  # Initialize the base class with color, name, and position
         self.value = 1000  # Assign a high value to the king
         self.vectors = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)]  # All possible moves for a king
+    
     def get_possible_moves(self, board_present):
         possible_moves = []
         for vector in self.vectors:
-            if not core.rules.isPathBlocked(board_present, vector, self.position, status=True):
-                possible_moves.append(vector)
+                row, col = self.position
+                d_row, d_col = vector
+                n_row, n_col = row + d_row, col + d_col
+                n_position = (n_row, n_col)
+                if not core.rules.isPathBlocked(board_present, vector, self.position, status = True):
+                    possible_moves.append(vector)
+                if core.rules.isinBoard(board_present, n_row, n_col) and core.rules.isPathBlocked(board_present, vector, self.position, status = True) and self.is_enemy(board_present, n_position):
+                    possible_moves.append(vector)
         return possible_moves
+    
     def __str__(self):
         return "K" if self.color == "white" else "k"
     def __repr__(self):
@@ -24,8 +32,11 @@ class king(Piece):
 def main():
     row, col = 0,0 
     king_piece = king("white", position=(row, col))
+    king_piece_1 = king("black", position=(row+1, col))
     board_test = [[0 for _ in range(8)] for _ in range(8)]
     board_test[row][col] = king_piece
+    board_test[row+1][col] = king_piece_1
+    
     board_test[2][4] = 2
     possible_moves = board_test[row][col].get_possible_moves(board_test)
     for move in possible_moves:

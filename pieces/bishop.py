@@ -15,9 +15,15 @@ class bishop(Piece):
     def get_possible_moves(self, board_present):
         possible_moves = []
         for vector in self.vectors:
+            vector_ = vector
             while not core.rules.isPathBlocked(board_present, vector, self.position, status=True):
                 possible_moves.append(vector)
-                vector = (vector[0] + vector[0], vector[1] + vector[1])  # Move further in the same direction
+                vector = (vector[0] + vector_[0], vector[1] + vector_[1])  # Move further in the same direction
+            r, c = self.position
+            d_r, d_c = vector
+            n_r, n_c = r + d_r, c + d_c
+            if core.rules.isinBoard(board_present, n_r, n_c) and core.rules.isPathBlocked(board_present, vector, self.position, status=True) and self.is_enemy(board_present, (n_r, n_c)):
+                possible_moves.append(vector)
         return possible_moves
 
     def __str__(self):
@@ -27,11 +33,12 @@ class bishop(Piece):
         return self.__str__()
 
 def main():
-    row, col = 4, 4
+    row, col = 5, 5
     bishop_piece = bishop("white", position=(row, col))
+    bishop_piece1 = bishop("black", position=(row+1, col+1))
     board_test = [[0 for _ in range(8)] for _ in range(8)]
     board_test[row][col] = bishop_piece
-    board_test[2][2] = 2
+    board_test[row+1][col+1] = bishop_piece1
     possible_moves = board_test[row][col].get_possible_moves(board_test)
     for move in possible_moves:
         new_row = row + move[0]
