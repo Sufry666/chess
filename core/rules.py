@@ -4,7 +4,7 @@ def isPathBlocked(board_present, vector, position, status = False):
     new_row, new_col = row + d_row, col + d_col
      # Initialize status to False, indicating the path is not blocked
     # Check if the new position is within the bounds of the board
-    if not (0 <= new_row < len(board_present) and 0 <= new_col < len(board_present[0])):
+    if not isinBoard(board_present, new_row, new_col):
         return True  # Out of bounds is considered blocked
 
     # Check if the path is blocked by another piece
@@ -12,6 +12,11 @@ def isPathBlocked(board_present, vector, position, status = False):
         return True  # Path is blocked
 
     return False  # Path is not blocked
+
+def isinBoard(board_present, n_row, n_col):
+    if 0 <= n_row < len(board_present) and 0 <= n_col < len(board_present[0]):
+        return True
+        
 def isChessmate(board_present, king_position):
     row, col = king_position
     for r_idx, row_cells in enumerate(board_present):

@@ -7,4 +7,44 @@ try:
 except ImportError:
     print("Rules module not found. Please ensure that rules.py is in the same directory as queen.py.")
 class queen(Piece):
-    pass
+    def __init__(self, color, name = "queen", position = None, ):
+        super().__init__(color, name, position)  # Initialize the base class with color, name, and position
+        self.value = 3  
+        self.vectors = [(1, 1), (1, -1), (-1, 1), (-1, -1), (1, 0), (-1, 0), (0, 1), (0, -1)]  # All possible moves for a bishop
+
+    def get_possible_moves(self, board_present):
+        possible_moves = []
+        for vector in self.vectors:
+            vector_ = vector
+            while not core.rules.isPathBlocked(board_present, vector, self.position, status=True):
+                possible_moves.append(vector)
+                vector = (vector[0] + vector_[0], vector[1] + vector_[1])  # Move further in the same direction
+            r, c = self.position
+            d_r, d_c = vector
+            n_r, n_c = r + d_r, c + d_c
+            if core.rules.isinBoard(board_present, n_r, n_c) and core.rules.isPathBlocked(board_present, vector, self.position, status=True) and self.is_enemy(board_present, (n_r, n_c)):
+                possible_moves.append(vector)
+        return possible_moves
+
+    def __str__(self):
+        return "Q" if self.color == "white" else "q"
+
+    def __repr__(self):
+        return self.__str__()
+
+def main():
+    row, col = 5, 5
+    queen_piece = queen("white", position=(row, col))
+    queen_piece1 = queen("white", position=(row+1, col+1))
+    board_test = [[0 for _ in range(8)] for _ in range(8)]
+    board_test[row][col] = queen_piece
+    board_test[row+1][col+1] = queen_piece1
+    possible_moves = board_test[row][col].get_possible_moves(board_test)
+    for move in possible_moves:
+        new_row = row + move[0]
+        new_col = col + move[1]
+        board_test[new_row][new_col] = 1  # Mark possible moves with 1
+    for row in board_test:
+        print(row)
+if __name__ == "__main__":
+    main()
