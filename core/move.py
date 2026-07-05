@@ -1,6 +1,18 @@
+import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+try:
+    import config # type: ignore
+    import utils.helper as helper # type: ignore
+except ImportError as e:
+    print(f"ImportError: {e}. Please check move.py")
+    sys.exit(1)
+
 class move:
-    def __init__(self,vectors, piece): #vectors is a list of tuples representing the direction and distance of the move
-        self.vectors = vectors
+    def __init__(self,vector, piece):
+        self.vector = vector
         self.piece = piece #pice is an instance of the piece class
-    
+        self.start = piece.position
+        self.end = (self.start[0] + self.vector[0], self.start[1] + self.vector[1])
+       
         

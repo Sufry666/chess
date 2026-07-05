@@ -1,9 +1,12 @@
-from piece import Piece
+
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 try:    
+    from pieces.piece import Piece # type: ignore
     import core.rules # type: ignore
+    import config # type: ignore
+    import utils.helper as helper # type: ignore
 except ImportError:
     print("Rules module not found. Please ensure that rules.py is in the same directory as rook.py.")
 class rook(Piece):
@@ -25,7 +28,14 @@ class rook(Piece):
             if core.rules.isinBoard(board_present, n_r, n_c) and core.rules.isPathBlocked(board_present, vector, self.position, status=True) and self.is_enemy(board_present, (n_r, n_c)):
                 possible_moves.append(vector)
         return possible_moves
-
+    def get_image_path(self):
+        root_dir = helper.get_root_dir()
+        if self.color == "white":
+            image_path = root_dir / config.WHITE_ROOK_PIECE_IMAGE_PATH
+            return image_path
+        else:
+            image_path = root_dir / config.BLACK_ROOK_PIECE_IMAGE_PATH
+            return image_path
     def __str__(self):
         return "R" if self.color == "white" else "r"
 

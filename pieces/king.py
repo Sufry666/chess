@@ -1,17 +1,20 @@
-from piece import Piece
+
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 try:    
+    from pieces.piece import Piece # type: ignore
     import core.rules # type: ignore
-except ImportError:
-    print("Rules module not found. Please ensure that rules.py is in the same directory as king.py.")
+    import utils.helper as helper # type: ignore
+    import config # type: ignore
+except ImportError as e:
+    print(f"{e}. Please check king.py.")
 class king(Piece):
     def __init__(self, color, name = "king", position = None):
         super().__init__(color, name, position)  # Initialize the base class with color, name, and position
         self.value = 1000  # Assign a high value to the king
         self.vectors = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)]  # All possible moves for a king
-    
+
     def get_possible_moves(self, board_present):
         possible_moves = []
         for vector in self.vectors:
@@ -24,7 +27,14 @@ class king(Piece):
                 if core.rules.isinBoard(board_present, n_row, n_col) and core.rules.isPathBlocked(board_present, vector, self.position, status = True) and self.is_enemy(board_present, n_position):
                     possible_moves.append(vector)
         return possible_moves
-    
+    def get_image_path(self):
+        root_dir = helper.get_root_dir()
+        if self.color == "white":
+            image_path = root_dir / config.WHITE_KING_PIECE_IMAGE_PATH
+            return image_path
+        else:
+            image_path = root_dir / config.BLACK_KING_PIECE_IMAGE_PATH
+            return image_path
     def __str__(self):
         return "K" if self.color == "white" else "k"
     def __repr__(self):
