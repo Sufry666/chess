@@ -6,11 +6,16 @@ try:
     from core.board import Board # type: ignore
     from pieces.king import king # type: ignore 
     from pieces.rook import rook # type: ignore 
+    from pieces.knight import knight # type: ignore 
+    from pieces.bishop import bishop # type: ignore 
+    from pieces.queen import queen # type: ignore 
     from ui.renderer import renderer # type: ignore
     import ui.input_handler as input_handler # type: ignore
     import config # type: ignore
     import utils.helper as helper # type: ignore
     from core.move import move # type: ignore
+    import ui.animations as animations #type: ignore
+    from ui.menu import menu # type: ignore
 except ImportError as e:
     print(f"ImportError: {e}. Please ensure game_state.py")
     sys.exit(1)
@@ -22,55 +27,58 @@ class game:
         self.board_rect = pg.Rect(x, y, size*config.CELL_SIZE, size*config.CELL_SIZE)
         self.records = []
         self.board = Board()
-        self.rook_black = rook("black")
+        self.menu = menu()
+        self.rook_black_left = rook("black")
+        self.rook_black_right = rook("black")
+        self.knight_black_left = knight("black")
+        self.knight_black_right = knight("black")
+        self.bishop_black_left = bishop("black")
+        self.bishop_black_right = bishop("black")
+        self.queen_black = queen("black")
         self.king_black = king("black")
     def initialize(self):
         self.renderer = renderer()
         self.board.board_list[0][4] = self.king_black
-        self.board.board_list[2][6] = self.rook_black
-        self.king_black.update_position((0, 4))
-        self.rook_black.update_position((2, 6))
+        self.board.board_list[0][3] = self.queen_black
+        self.board.board_list[0][0] = self.rook_black_left
+        self.board.board_list[0][7] = self.rook_black_right
+        self.board.board_list[0][1] = self.knight_black_left
+        self.board.board_list[0][6] = self.knight_black_right
+        self.board.board_list[0][2] = self.bishop_black_left
+        self.board.board_list[0][5] = self.bishop_black_right
+        for idx_r, row in enumerate(self.board.board_list):
+            for idx_c, piece in enumerate(row):
+                if piece != 0:
+                    piece.update_position((idx_r, idx_c))
+        
         self.renderer.print_board(self.board.rect_list)
-    def update_a_step(self, ):
-        pass
+        self.renderer.print_menu(self.menu.init_button_list)
+
     def run(self):
+        self.highlight_button = None
+        self.highlight_piece = None
+        self.pos = None
         self.running = True
-        isTapPiece = False
-        PossibleVectors = None
-        VectorTodo = None
-        PieceToMove = None
+        self.state = "input_getting"
+        self.PossibleVectors = None
+        self.VectorTodo = None
+        self.PieceToMove = None
+        self.anim = None
         self.initialize()
         while self.running:
-            self.renderer.draw_piece(self.board.board_list)
-            for event in pg.event.get()[:10]:
-                if event.type == pg.QUIT:
-                    self.running = False
-                if event.type == pg.MOUSEMOTION:
-                    continue
-                if event.type == pg.MOUSEBUTTONDOWN:
-                    if event.button == 1:
-                        if self.board_rect.collidepoint(event.pos):
-                            row, col = input_handler.get_mouse_coordinate_in_board(self.board.rect_list,event.pos)
-                            if isTapPiece:
-                                VectorTodo = (row - VectorTodo[0], col - VectorTodo[1])
-                                if VectorTodo in PossibleVectors:
-                                    
-                                    move_temp = move(vector = VectorTodo, piece = PieceToMove)
-                                    self.board.update(move_temp)
-                                    self.renderer.print_board(self.board.rect_list)
-                                    self.renderer.draw_piece(self.board.board_list)
-                                    self.records.append(move_temp)
-                                    isTapPiece = False
-                                else:
-                                    self.renderer.print_board(self.board.rect_list)
-                                    self.renderer.draw_piece(self.board.board_list)
-                                    isTapPiece = False
-                            elif self.board.board_list[row][col] != 0 and not isTapPiece:#and 判断谁走
-                                isTapPiece = True
-                                PossibleVectors = self.board.board_list[row][col].get_possible_moves(self.board.board_list)
-                                self.renderer.show_possible_destination((row, col),PossibleVectors )
-                                VectorTodo = (row, col)
-                                PieceToMove = self.board.board_list[row][col]
+            self.pos = pg.mouse.get_pos()
+            if self.state == "animation":
+                animations.handle_animation(self)
+
+            elif self.state == "input_getting" or "piece_selected":
+                for event in pg.event.get()[:10]:
+                    if event.type == pg.QUIT:
+                        self.running = False
+                    elif event.type == pg.MOUSEBUTTONDOWN:
+                        input_handler.handle_click(self, event) 
+                    else:
+                        input_handler.handle_wait(self)
+                        
             pg.display.flip()
             self.renderer.clock.tick(config.FPS)    
         pg.quit()

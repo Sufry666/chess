@@ -10,7 +10,7 @@ try:
 except ImportError:
     print("Rules module not found. Please ensure that rules.py is in the same directory as rook.py.")
 class rook(Piece):
-    def __init__(self, color, name = "queen", position = None, ):
+    def __init__(self, color, name = "rook", position = None, ):
         super().__init__(color, name, position)  # Initialize the base class with color, name, and position
         self.value = 3  
         self.vectors = [(1, 0), (-1, 0), (0, 1), (0, -1)]  # All possible moves for a bishop
