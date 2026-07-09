@@ -19,8 +19,8 @@ class renderer:
         self.clock = pg.time.Clock()
         self.screen = pg.display.set_mode((config.WINDOW_WIDTH, config.WINDOW_HEIGHT))
         self.point_image = self.get_images(config.POSSIBLE_DESTINATION_IMAGE_PATH)
-        self.font = self.get_fonts(config.FONT_PATH, 40)
-    
+        self.font_for_init = self.get_fonts(config.FONT_PATH, 40)
+        self.font_for_game = self.get_fonts(config.FONT_PATH, 18)
     
     def get_images(self, path):
         root_dir = helper.get_root_dir()
@@ -40,11 +40,11 @@ class renderer:
     
     def print_words(self, text, rect = None, font = None, color = config.BLACK):
         if not font:
-            font = self.font
+            font = self.font_for_init
         text_surface = font.render(text, True, color)
         text_rect = text_surface.get_rect()
         x, y = rect.center
-        text_rect.center =  (x, y + 8)
+        text_rect.center =  (x, y + (rect.width / 80))
         self.screen.blit(text_surface, text_rect)
     
 
@@ -59,7 +59,20 @@ class renderer:
                     continue
                 x, y = helper.index_to_position(row, col)
                 self.screen.blit(piece.image, (x, y))
+    def print_information(self, game):
+        x = game.menu.gaming_button_list[6].rect.x
+        y = game.menu.gaming_button_list[6].rect.y
+        w = game.menu.gaming_button_list[6].rect.width
+        information_list = [move.return_information() for move in game.records[-10:]]
+        font = self.font_for_game
+        for i in range(len(information_list)):
+            text_surface = font.render(information_list[i], True, config.BLACK)
+            text_rect = text_surface.get_rect()
+            text_rect.center = (x + w / 2, y + 45 + i * 30)
+            self.screen.blit(text_surface, text_rect)
+            
 
+            
     def print_board(self, rect_list):
 
         self.screen.fill(config.BACKGROUND_COLOR)
@@ -80,22 +93,38 @@ class renderer:
             self.screen.blit(self.point_image, position)
     
     def cover_highlight(self, rect):
-        pg.draw.rect(self.screen, config.BACKGROUND_COLOR, rect)
+        light_rect = rect.copy()
+        light_rect.x += light_rect.width / 80
+        light_rect.y += light_rect.width / 80
+        light_rect.inflate_ip(light_rect.width * 0.05, light_rect.height * 0.2)
+        pg.draw.rect(self.screen, config.BACKGROUND_COLOR, light_rect)
     
     def show_button_highlight(self, button):
+        if button.name == "information":
+            return
         light_rect = button.rect.copy()
-        light_rect.x += 4
-        light_rect.y += 4
+        light_rect.x += light_rect.width / 80
+        light_rect.y += light_rect.width / 80
         light_rect.inflate_ip(light_rect.width * 0.05, light_rect.height * 0.2)
         pg.draw.rect(self.screen, config.BUTTON_COLOR["highlight"], light_rect, border_radius= 10 )
-    def print_menu(self, button_list):
+    
+    def print_menu(self, button_list, font = None):
         for button in button_list:
+            if button.name == "information":
+                rect_up = button.rect.copy()
+                rect_up.height = 30
+
+                pg.draw.rect(self.screen, config.WHITE, button.rect, border_radius= 15)
+
+                self.print_words(button.name, rect_up, font= font)
+
+                continue
             shadow_rect = button.rect.copy()
-            shadow_rect.x += 4
-            shadow_rect.y += 4
+            shadow_rect.x += shadow_rect.width / 80
+            shadow_rect.y += shadow_rect.width / 80
             pg.draw.rect(self.screen, config.BUTTON_COLOR["shadow"], shadow_rect, border_radius= 10)
             pg.draw.rect(self.screen, config.BUTTON_COLOR["normal"], button.rect, border_radius= 10)
-            self.print_words(button.name, button.rect)
+            self.print_words(button.name, button.rect, font= font)
 
 def main():
     board1 = Board()

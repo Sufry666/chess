@@ -36,6 +36,16 @@ class game:
         self.bishop_black_right = bishop("black")
         self.queen_black = queen("black")
         self.king_black = king("black")
+        
+        
+        self.rook_white_left = rook("white")
+        self.rook_white_right = rook("white")
+        self.knight_white_left = knight("white")
+        self.knight_white_right = knight("white")
+        self.bishop_white_left = bishop("white")
+        self.bishop_white_right = bishop("white")
+        self.queen_white = queen("white")
+        self.king_white = king("white")
     def initialize(self):
         self.renderer = renderer()
         self.board.board_list[0][4] = self.king_black
@@ -46,6 +56,17 @@ class game:
         self.board.board_list[0][6] = self.knight_black_right
         self.board.board_list[0][2] = self.bishop_black_left
         self.board.board_list[0][5] = self.bishop_black_right
+
+        self.board.board_list[7][4] = self.king_white
+        self.board.board_list[7][3] = self.queen_white
+        self.board.board_list[7][0] = self.rook_white_left
+        self.board.board_list[7][7] = self.rook_white_right
+        self.board.board_list[7][1] = self.knight_white_left
+        self.board.board_list[7][6] = self.knight_white_right
+        self.board.board_list[7][2] = self.bishop_white_left
+        self.board.board_list[7][5] = self.bishop_white_right
+
+
         for idx_r, row in enumerate(self.board.board_list):
             for idx_c, piece in enumerate(row):
                 if piece != 0:
@@ -55,6 +76,8 @@ class game:
         self.renderer.print_menu(self.menu.init_button_list)
 
     def run(self):
+        self.player = "white"
+        self.move_temp = None
         self.highlight_button = None
         self.highlight_piece = None
         self.pos = None
@@ -72,8 +95,11 @@ class game:
 
             elif self.state == "input_getting" or "piece_selected":
                 for event in pg.event.get()[:10]:
+
                     if event.type == pg.QUIT:
                         self.running = False
+                    elif self.state == "animation":
+                        continue
                     elif event.type == pg.MOUSEBUTTONDOWN:
                         input_handler.handle_click(self, event) 
                     else:
@@ -84,13 +110,9 @@ class game:
         pg.quit()
 def test():
     game1 = game()
-    """game1.initialize()
-    print(type(game1.board.board_list))
-    game1.renderer.draw_piece(game1.board.board_list)
-    pg.display.flip()
-    pg.time.wait(5000)"""
+    
     game1.run()
-    #print(game1.board_rect)
+
 
 if __name__ == "__main__":
     test()
