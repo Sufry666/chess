@@ -16,7 +16,7 @@ class pawn(Piece):
         self.vectors_ = [(1, 1), (1, -1)]
         self.direction = 1 if self.color == 'black' else -1
     
-    def get_possible_moves(self, board_present):
+    def get_possible_moves_origin(self, board_present):
         possible_moves = []
         for vector in self.vectors:
             vector = (vector[0] * self.direction, vector[1])
@@ -34,6 +34,14 @@ class pawn(Piece):
                 if core.rules.isinBoard(board_present, n_r, n_c) and self.is_enemy(board_present, (n_r, n_c)):
                     possible_moves.append(vector)
         return possible_moves
+    
+    def get_possible_moves(self, board_present):
+        vectors = self.get_possible_moves_origin(board_present)
+        possible_moves_final = []
+        for vector in vectors:
+            if not core.rules.will_be_Chessmate(board_present, self.position, vector, self.color):
+                possible_moves_final.append(vector)
+        return possible_moves_final
     
     def get_image_path(self):
         root_dir = helper.get_root_dir()
