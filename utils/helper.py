@@ -23,3 +23,15 @@ def get_destinations_by_vectors(start_position, vectors):
         destination = (start_position[0] + vector[0], start_position[1] + vector[1])
         destinations.append(destination)
     return destinations
+
+def coordinate_to_information(name, color, start, end):
+    temp = {0 : "a", 1 : "b", 2: "c", 3: "d", 4: "e", 5: "f", 6: "g", 7: "h"}
+    table = {}
+    for i in range(8):
+        for j in range(8):
+            table[(i,j)] =  temp[j] + str(8-i) 
+    text = f"{name}_{color} moved from {table[start]} to {table[end]}"
+    return text
+
+if __name__ == "__main__":
+    coordinate_to_information()

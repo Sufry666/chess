@@ -35,15 +35,20 @@ def show_highlight_piece(game):
             game.highlight_piece.position_inscreen = next(get)
             game.renderer.print_board(game.board.rect_list)
             game.renderer.draw_piece(game.board.board_list)
+            game.renderer.print_menu(game.menu.return_button_present(), game.renderer.font_for_game)
+            game.renderer.print_information(game)
             yield
         except StopIteration:
             return
 
 def move_animation(game):
-    
-    idx_s = game.records[-1].start
-    idx_e = game.records[-1].end
-    piece = game.PieceToMove
+    if not game.PieceToMove :
+        return
+    if not game.move_temp:
+        return
+    idx_s = game.move_temp.start
+    idx_e = game.move_temp.end
+    piece = game.move_temp.piece
     
     get = get_moving_position(idx_s= idx_s, idx_e= idx_e)
     while True:
@@ -51,29 +56,42 @@ def move_animation(game):
             piece.position_inscreen = next(get)
             game.renderer.print_board(game.board.rect_list)
             game.renderer.draw_piece(game.board.board_list)
+            game.renderer.print_menu(game.menu.return_button_present(), game.renderer.font_for_game)
+            game.renderer.print_information(game)
             yield
         except StopIteration:
             return
-            
+
+
+
+
+
 def handle_animation(game):
     if not game.anim and not game.highlight_piece:
         game.anim = move_animation(game)
-        return
+        
     if not game.anim and game.highlight_piece:
         game.anim = show_highlight_piece(game)
-        return
     try:
         next(game.anim)
     except StopIteration:
-        if not game.highlight_piece:
-            game.board.update(game.records[-1])
-            game.records[-1].piece.position_inscreen = None
+        if not game.highlight_piece and game.move_temp:
+            
+            game.board.update(game.move_temp)
+            game.renderer.print_board(game.board.rect_list)
+            game.renderer.draw_piece(game.board.board_list)
+            game.renderer.print_menu(game.menu.return_button_present(), game.renderer.font_for_game)
+            game.renderer.print_information(game)
+            game.move_temp.isRetract = False
+            game.move_temp.piece.position_inscreen = None
+            game.move_temp = None
             game.anim = None
             game.state = "input_getting"
         else:
             game.anim = None
             game.state = "input_getting"
             game.highlight_piece.position_inscreen = None
+
 def main():
     pg.init()
     renderer_test = renderer()

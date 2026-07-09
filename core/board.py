@@ -22,12 +22,20 @@ class Board:
             self.rect_list.append(row)
 
     def update(self, move):
+        if not move:
+            return
         start_x, start_y = move.start
         end_x, end_y = move.end
         move.piece.update_position((end_x, end_y))
         self.board_list[end_x][end_y] = move.piece
+        
+        if  move.isRetract and move.piece_captured:
+            self.board_list[start_x][start_y] = move.piece_captured
+            
+            
+            return
         self.board_list[start_x][start_y] = 0
-               
+    
 def main():
     board1 = Board()
     print(board1.board_list)
