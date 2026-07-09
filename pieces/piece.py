@@ -30,9 +30,13 @@ class Piece(ABC):
         self.position = new_position
 
     def is_enemy(self, board_present, new_position):#需要保证此处有棋子
+        
+        
         row, col = new_position
+        
         if self.color != board_present[row][col].color:
             return True
+
     
     def generate_image(self):
         image_path = self.get_image_path()

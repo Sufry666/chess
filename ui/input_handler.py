@@ -60,7 +60,7 @@ def handle_click_inboard(game):
             game.player = "white"
         else:
             game.player = "black"
-       
+        game.move_temp.piece.moved_times += 1
         game.records.append(game.move_temp)
         #print(game.records) # 加入窗口显示
         
@@ -86,6 +86,7 @@ def handle_click_inmenu(game):
                 game.player = "black"
             game.move_temp = game.records.pop()
             game.move_temp.isRetract = True
+            game.move_temp.piece.moved_times -= 1
             temp = game.move_temp.start
             game.move_temp.start = game.move_temp.end
             game.move_temp.end = temp

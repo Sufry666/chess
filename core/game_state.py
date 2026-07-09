@@ -9,6 +9,7 @@ try:
     from pieces.knight import knight # type: ignore 
     from pieces.bishop import bishop # type: ignore 
     from pieces.queen import queen # type: ignore 
+    from pieces.pawn import pawn # type: ignore
     from ui.renderer import renderer # type: ignore
     import ui.input_handler as input_handler # type: ignore
     import config # type: ignore
@@ -36,8 +37,9 @@ class game:
         self.bishop_black_right = bishop("black")
         self.queen_black = queen("black")
         self.king_black = king("black")
-        
-        
+        self.pawn_black = [0 for _ in range(8)]
+        for i in range(8):
+            self.pawn_black[i] = pawn("black")
         self.rook_white_left = rook("white")
         self.rook_white_right = rook("white")
         self.knight_white_left = knight("white")
@@ -46,6 +48,9 @@ class game:
         self.bishop_white_right = bishop("white")
         self.queen_white = queen("white")
         self.king_white = king("white")
+        self.pawn_white = [0 for _ in range(8)]
+        for i in range(8):
+            self.pawn_white[i] = pawn("white")
     def initialize(self):
         self.renderer = renderer()
         self.board.board_list[0][4] = self.king_black
@@ -56,7 +61,9 @@ class game:
         self.board.board_list[0][6] = self.knight_black_right
         self.board.board_list[0][2] = self.bishop_black_left
         self.board.board_list[0][5] = self.bishop_black_right
-
+        for i in range(8):
+            self.board.board_list[1][i] = self.pawn_black[i]
+            self.board.board_list[6][i] = self.pawn_white[i]
         self.board.board_list[7][4] = self.king_white
         self.board.board_list[7][3] = self.queen_white
         self.board.board_list[7][0] = self.rook_white_left
