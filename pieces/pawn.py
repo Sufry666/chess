@@ -1,10 +1,49 @@
-from piece import Piece
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 try:    
+    from pieces.piece import Piece # type: ignore
     import core.rules # type: ignore
-except ImportError:
-    print("Rules module not found. Please ensure that rules.py is in the same directory as pawn.py.")
+    import utils.helper as helper # type: ignore
+    import config # type: ignore
+except ImportError as e:
+    print(f"{e}. Please check king.py.")
 class pawn(Piece):
-    pass
+    def __init__(self, color, name = "pawn", position = None):
+        super().__init__(color, name, position)  # Initialize the base class with color, name, and position
+        self.value = 1000
+        self.vectors = [(1, 0)]
+        self.vectors_ = [(1, 1), (1, -1)]
+        self.direction = 1 if self.color == 'black' else -1
+    
+    def get_possible_moves(self, board_present):
+        possible_moves = []
+        for vector in self.vectors:
+            vector = (vector[0] * self.direction, vector[1])
+            if not core.rules.isPathBlocked(board_present, vector, self.position, True):
+                possible_moves.append(vector)
+                if self.moved_times == 0:
+                    if not core.rules.isPathBlocked(board_present, (2 * self.direction, 0), self.position, True):
+                        possible_moves.append((2 * self.direction, 0))
+        for vector in self.vectors_:
+            vector = (vector[0] * self.direction, vector[1])
+            if core.rules.isPathBlocked(board_present, vector, self.position, True):
+                r, c = self.position
+                d_r, d_c = vector
+                n_r, n_c = r + d_r, c + d_c
+                if self.is_enemy(board_present, (n_r, n_c)):
+                    possible_moves.append(vector)
+        return possible_moves
+    
+    def get_image_path(self):
+        root_dir = helper.get_root_dir()
+        if self.color == "white":
+            image_path = root_dir / config.WHITE_PAWN_PIECE_IMAGE_PATH
+            return image_path
+        else:
+            image_path = root_dir / config.BLACK_PAWN_PIECE_IMAGE_PATH
+            return image_path
+    def __str__(self):
+        return "P" if self.color == "white" else "p"
+    def __repr__(self):
+        return self.__str__()

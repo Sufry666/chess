@@ -16,7 +16,8 @@ class Piece(ABC):
         self.name = name
         self.position = position
         self.position_inscreen = None
-        self.generate_image()
+        self.moved_times = 0 #棋子被移动过的次数
+        self.generate_image() 
         
     @abstractmethod
     def get_possible_moves(self, board_present):
