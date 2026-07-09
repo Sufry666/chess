@@ -31,7 +31,7 @@ class pawn(Piece):
                 r, c = self.position
                 d_r, d_c = vector
                 n_r, n_c = r + d_r, c + d_c
-                if self.is_enemy(board_present, (n_r, n_c)):
+                if core.rules.isinBoard(board_present, n_r, n_c) and self.is_enemy(board_present, (n_r, n_c)):
                     possible_moves.append(vector)
         return possible_moves
     

@@ -8,6 +8,7 @@ except ImportError as e:
     print(f"ImportError: {e}. Please check move.py")
     sys.exit(1)
 
+
 class move:
     def __init__(self,vector, piece, piece_captured = None, isRetract = False):
         self.isRetract = isRetract

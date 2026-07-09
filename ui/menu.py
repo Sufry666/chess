@@ -41,7 +41,7 @@ class menu:
         self.gaming_button_list = []
         for i in range(2):
             for j in range(3):
-                button_temp = Button(init_co[0] + i * 200, init_co[1] + 390 + j * 70, 120, 30)
+                button_temp = Button(init_co[0] + i * 190, init_co[1] + 390 + j * 60, 130, 40)
                 self.gaming_button_list.append(button_temp)
         self.gaming_button_list.append(game_information)
         self.gaming_button_list[6].update_name("information")
