@@ -56,8 +56,8 @@ def handle_click_inboard(game):
             game.records[-1].piece.is_moved_latest = False # 移动前更新上一个被移动的棋子的 最后移动的棋子 这一数据
         if game.board.board_list[row][col] != 0: # 此情况为终点有子 必定为正常吃子
             game.move_temp = move(vector = game.VectorTodo, piece = game.PieceToMove, piece_captured = game.board.board_list[row][col])
-#        elif game.PieceToMove.name == "pawn" and game.VectorTodo[1] != 0: # 由于前一种情况为终点有子 故此处及后续情况均为终点无子 若被移动的棋子为pawn（此if的条件1）且移动方向不为竖直 即col坐标改变（此if的条件2） 说明该移动一定是吃过路兵
-#            game.move_temp = move(vector = game.VectorTodo, piece = game.PieceToMove, piece_captured = game.board.board_list[row - game.PieceToMove.direction][col])
+        elif game.PieceToMove.name == "pawn" and game.VectorTodo[1] != 0: # 由于前一种情况为终点有子 故此处及后续情况均为终点无子 若被移动的棋子为pawn（此if的条件1）且移动方向不为竖直 即col坐标改变（此if的条件2） 说明该移动一定是吃过路兵
+            game.move_temp = move(vector = game.VectorTodo, piece = game.PieceToMove, piece_captured = game.board.board_list[row - game.PieceToMove.direction][col], isSpecialMove = True)
         else: # 由于上述情况将 终点有子 与 终点无子且pawn斜着走 讨论完毕 故此情况必定为终点无子的常规移动
             game.move_temp = move(vector = game.VectorTodo, piece = game.PieceToMove)
         if game.player == "black":
