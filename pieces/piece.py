@@ -18,6 +18,7 @@ class Piece(ABC):
         self.position_inscreen = None
         self.moved_times = 0 #棋子被移动过的次数
         self.generate_image() 
+        self.is_moved_latest = False #该值表示本棋子是否为双方所有棋子中最新被移动的棋子
         
     @abstractmethod
     def get_possible_moves(self, board_present):
