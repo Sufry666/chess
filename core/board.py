@@ -24,16 +24,20 @@ class Board:
     def update(self, move):
         if not move:
             return
+
         start_x, start_y = move.start
         end_x, end_y = move.end
         move.piece.update_position((end_x, end_y))
         self.board_list[end_x][end_y] = move.piece
         
+        if  move.isSpecialMove == True: # 若move为吃过路兵
+            self.board_list[end_x - move.piece.direction][end_y] = 0 # 将被吃的过路兵所在位置设为 0
         if  move.isRetract and move.piece_captured:
-            self.board_list[start_x][start_y] = move.piece_captured
-            
-            
-            return
+            if move.isSpecialMove == True: # 若move为吃过路兵 且此时为悔棋
+                self.board_list[start_x - move.piece.direction][start_y] = move.piece_captured # 将被吃兵在原位还原
+            else:
+                self.board_list[start_x][start_y] = move.piece_captured
+                return
         self.board_list[start_x][start_y] = 0
     
 def main():

@@ -15,7 +15,7 @@ class king(Piece):
         self.value = 1000  # Assign a high value to the king
         self.vectors = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)]  # All possible moves for a king
 
-    def get_possible_moves(self, board_present):
+    def get_possible_moves_origin(self, board_present):
         possible_moves = []
         for vector in self.vectors:
                 row, col = self.position
@@ -27,6 +27,15 @@ class king(Piece):
                 if core.rules.isinBoard(board_present, n_row, n_col) and core.rules.isPathBlocked(board_present, vector, self.position, status = True) and self.is_enemy(board_present, n_position):
                     possible_moves.append(vector)
         return possible_moves
+    
+    def get_possible_moves(self, board_present):
+        vectors = self.get_possible_moves_origin(board_present)
+        possible_moves_final = []
+        for vector in vectors:
+            if not core.rules.will_be_Chessmate(board_present, self.position, vector, self.color):
+                possible_moves_final.append(vector)
+        return possible_moves_final
+    
     def get_image_path(self):
         root_dir = helper.get_root_dir()
         if self.color == "white":
