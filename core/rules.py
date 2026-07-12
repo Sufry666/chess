@@ -17,8 +17,8 @@ def isinBoard(board_present, n_row, n_col):
     if 0 <= n_row < len(board_present) and 0 <= n_col < len(board_present[0]):
         return True
         
-def isChessmate(board_present, king_position, color = None):
-    row, col = king_position
+def isChessmate(board_present, position, color = None): # color 为己方颜色 检测position是否在敌方攻击范围内
+    row, col = position
     color_team = color if color != None else board_present[row][col].color
     for r_idx, row_cells in enumerate(board_present):
         for c_idx, cell in enumerate(row_cells):
