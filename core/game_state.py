@@ -24,8 +24,8 @@ class game:
     def __init__(self, size = 8):
         pg.init()
         self.running = False
-        x , y= helper.index_to_position(0, 0)
-        self.board_rect = pg.Rect(x, y, size*config.CELL_SIZE, size*config.CELL_SIZE)
+        
+        self.board_rect = pg.Rect(config.BOARD_COORDINATE[0], config.BOARD_COORDINATE[1], size*config.CELL_SIZE, size*config.CELL_SIZE) #应修改
         self.records = []
         self.board = Board()
         self.menu = menu()
@@ -79,35 +79,43 @@ class game:
                 if piece != 0:
                     piece.update_position((idx_r, idx_c))
         
-        self.renderer.print_board(self.board.rect_list)
-        self.renderer.print_menu(self.menu.init_button_list)
+        """self.renderer.print_board(self.board.rect_list)
+        self.renderer.print_menu(self.menu.init_button_list, "start")
+        self.renderer.screen.blit(self.renderer.logical_surface, self.renderer.data["logical_surface_coordinate"])"""
+        self.renderer.render_handle(self)
 
     def run(self):
         self.player = "white"
         self.move_temp = None
-        self.highlight_button = None
-        self.highlight_piece = None
+        self.highlight_button = None   #待优化
+        #self.highlight_piece = None#待优化
         self.pos = None
         self.running = True
         self.state = "input_getting"
+        self.animation_state = "highlight"
         self.PossibleVectors = None
         self.VectorTodo = None
-        self.PieceToMove = None
+        self.PieceToMove = None#待优化
         self.anim = None
         self.initialize()
         while self.running:
             self.pos = pg.mouse.get_pos()
+            self.pos = ((self.pos[0] - self.renderer.data["logical_surface_coordinate"][0])
+                        , (self.pos[1] - self.renderer.data["logical_surface_coordinate"][1]))
             if self.state == "animation":
                 animations.handle_animation(self)
 
             elif self.state == "input_getting" or "piece_selected":
                 for event in pg.event.get()[:10]:
+                    if event.type == pg.VIDEORESIZE:
 
+                        self.renderer.update_screen(self, event.w, event.h)
+                        
                     if event.type == pg.QUIT:
                         self.running = False
-                    elif self.state == "animation":
+                    if self.state == "animation":
                         continue
-                    elif event.type == pg.MOUSEBUTTONDOWN:
+                    if event.type == pg.MOUSEBUTTONDOWN:
                         input_handler.handle_click(self, event) 
                     else:
                         input_handler.handle_wait(self)

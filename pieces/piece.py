@@ -4,7 +4,7 @@ import os
 import pygame as pg
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 try:    
-    import core.rules # type: ignore
+
     import config # type: ignore
     import utils.helper as helper # type: ignore
 except ImportError:
@@ -17,7 +17,7 @@ class Piece(ABC):
         self.position = position
         self.position_inscreen = None
         self.moved_times = 0 #棋子被移动过的次数
-        self.generate_image() 
+        self.generate_image(config.CELL_SIZE) 
         self.is_moved_latest = False #该值表示本棋子是否为双方所有棋子中最新被移动的棋子
         
     @abstractmethod
@@ -39,11 +39,12 @@ class Piece(ABC):
             return True
 
     
-    def generate_image(self):
+    def generate_image(self, cell_size):
         image_path = self.get_image_path()
         if image_path:
             self.image = pg.image.load(image_path)
-            self.image = pg.transform.scale(self.image, (config.CELL_SIZE, config.CELL_SIZE))
+            self.image = pg.transform.scale(self.image, (cell_size, cell_size))
             
     
+        
     

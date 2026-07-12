@@ -10,19 +10,47 @@ try:
 except ImportError as e:
     print(f"{e}. Please check menu.py.")
 class Button:
-    def __init__(self, x = None, y = None, width = None , height = None):
+    def __init__(self, x = None, y = None, width = None , height = None, isButton = True):
+        self.isButton = isButton
         self.rect = pg.Rect(x, y, width, height)
-        self.position = (x, y)
     def update_name(self, name):
         if name:
             self.name = name
         return
+    
+    def update_rect(self, x, y, w, h):
+        self.rect.x = x
+        self.rect.y = y
+        self.rect.width = w 
+        self.rect.height = h
+
+
 class menu:
     def __init__(self):
         self.rect = pg.Rect(config.MENU_COORDINATE[0], config.MENU_COORDINATE[1], config.MENU_WIDTH, config.MENU_HEIGHT)
         self.get_init_menu()
         self.state = "start"
         self.get_gaming_menu()
+    
+    def update_data(self, menu_coordinate, menu_width, menu_height):
+        self.rect.x, self.rect.y = menu_coordinate
+        self.rect.width = menu_width
+        self.rect.height = menu_height
+        temp = self.rect.width / 10
+        temp_ = temp * 3 / 4
+        for i in range(5):
+            self.init_button_list[i].update_rect(self.rect.x + temp , self.rect.y + temp * 3 * i, temp * 8, temp * 2)
+        for i in range(2):
+            for j in range(3):
+                self.gaming_button_list[3*i + j].update_rect(
+                    self.rect.x + temp + i * (4 *temp + temp_), 
+                    self.rect.y + temp * 9 + temp_ + j * 2 * temp_,
+                    temp_ * 3 + temp,
+                    temp 
+                    )
+        self.gaming_button_list[6].update_rect(self.rect.x + temp , self.rect.y , temp * 8, temp * 9)
+        
+    
     def get_init_menu(self):
         init_co = (config.MENU_COORDINATE[0] + 40, config.MENU_COORDINATE[1] + 40)
         self.init_button_list = [0 for _ in range(5)]
@@ -37,7 +65,7 @@ class menu:
     
     def get_gaming_menu(self):
         init_co = (config.MENU_COORDINATE[0] + 40, config.MENU_COORDINATE[1] + 40)
-        game_information = Button(init_co[0], init_co[1], 320, 360)
+        game_information = Button(init_co[0], init_co[1], 320, 360, isButton= False)
         self.gaming_button_list = []
         for i in range(2):
             for j in range(3):
@@ -71,7 +99,7 @@ def main():
     
     renderer_test.print_board(board_test.rect_list)
     
-    renderer_test.print_menu(menu_test.gaming_button_list, renderer_test.font_for_game)
+
     pg.display.flip()
     pg.time.wait(5000)
 if __name__ == "__main__":
