@@ -34,6 +34,24 @@ class king(Piece):
         for vector in vectors:
             if not core.rules.will_be_Chessmate(board_present, self.position, vector, self.color):
                 possible_moves_final.append(vector)
+        if self.moved_times == 0 and board_present[self.position[0]][0] != 0 and board_present[self.position[0]][0].moved_times == 0:
+            if board_present[self.position[0]][1] == 0 and board_present[self.position[0]][2] == 0 and board_present[self.position[0]][3] == 0:
+                judge = True
+                for i in range(2, 5):
+                    if core.rules.isChessmate(board_present, (self.position[0],i), self.color):
+                        judge = False
+                        break
+                if judge == True:
+                    possible_moves_final.append((0, -2))
+        if self.moved_times == 0 and board_present[self.position[0]][0] != 0 and board_present[self.position[0]][0].moved_times == 0:
+            if board_present[self.position[0]][5] == 0 and board_present[self.position[0]][6] == 0:
+                judge = True
+                for i in range(2, 5):
+                    if core.rules.isChessmate(board_present, (self.position[0],i), self.color):
+                        judge = False
+                        break
+                if judge == True:
+                    possible_moves_final.append((0, 2))
         return possible_moves_final
     
     def get_image_path(self):

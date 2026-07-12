@@ -72,7 +72,10 @@ def handle_click_inboard(game):
         elif game.PieceToMove.name == "pawn" and game.VectorTodo[1] != 0: # 由于前一种情况为终点有子 故此处及后续情况均为终点无子 若被移动的棋子为pawn（此if的条件1）且移动方向不为竖直 即col坐标改变（此if的条件2） 说明该移动一定是吃过路兵
             game.move_temp.add_move(vector = game.VectorTodo, piece = game.PieceToMove, piece_captured = game.board.board_list[row - game.PieceToMove.direction][col])
             game.move_temp.isSpecialMove = True
-        else: # 由于上述情况将 终点有子 与 终点无子且pawn斜着走 讨论完毕 故此情况必定为终点无子的常规移动
+        elif game.PieceToMove.name == "king" and abs(game.VectorTodo[1]) > 1: # 王车易位
+            game.move_temp.add_move(vector = game.VectorTodo, piece = game.PieceToMove)
+            game.move_temp.add_move(vector = (0, 3) if game.VectorTodo[1] == -2 else(0, -2), piece = game.board.board_list[game.PieceToMove.position[0]][0] if game.VectorTodo[1] == -2 else game.board.board_list[game.PieceToMove.position[0]][7])
+        else: # 由于上述情况将 终点有子 与 终点无子且pawn斜着走 王车易位 讨论完毕 故此情况必定为终点无子的常规移动
             game.move_temp.add_move(vector = game.VectorTodo, piece = game.PieceToMove)
         if game.player == "black":
             game.player = "white"

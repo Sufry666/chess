@@ -17,15 +17,16 @@ def isinBoard(board_present, n_row, n_col):
     if 0 <= n_row < len(board_present) and 0 <= n_col < len(board_present[0]):
         return True
         
-def isChessmate(board_present, king_position):
+def isChessmate(board_present, king_position, color = None):
     row, col = king_position
+    color_team = color if color != None else board_present[row][col].color
     for r_idx, row_cells in enumerate(board_present):
         for c_idx, cell in enumerate(row_cells):
             if cell == 0:
                 continue
             piece = cell
 
-            if piece.color != board_present[row][col].color:  # Check if the piece is of the opposite color
+            if piece.color != color_team:  # Check if the piece is of the opposite color
                 possible_moves = piece.get_possible_moves_origin(board_present)  # Get the possible moves for the piece
                 enemy_position = piece.position
                 for vector in possible_moves:
