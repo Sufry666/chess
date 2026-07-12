@@ -10,17 +10,20 @@ except ImportError as e:
 
 
 class move:
-    def __init__(self,vector, piece, piece_captured = None, isRetract = False, isSpecialMove = False):
+    def __init__(self, isRetract = False, isSpecialMove = False):
         self.isRetract = isRetract
-        self.piece_captured = piece_captured
-        self.vector = vector
-        self.piece = piece #pice is an instance of the piece class
-        self.start = piece.position
-        self.end = (self.start[0] + self.vector[0], self.start[1] + self.vector[1])
+        self.moves = []
         self.isSpecialMove = isSpecialMove
-    
+    def add_move(self, vector, piece, piece_captured = None):
+        start = piece.position
+        end = (start[0] + vector[0], start[1] + vector[1])
+        self.moves.append((piece, piece_captured, start, end))
     def return_information(self):
-        return helper.coordinate_to_information(self.piece.name, self.piece.color, self.start, self.end)
+
+        for piece,_,start,end in self.moves:
+            return helper.coordinate_to_information(piece.name, piece.color, start, end)#待优化
+
+        
     
     def __str__(self):
         return f"{self.piece.name} of {self.piece.color} move from {self.start} to {self.end}"

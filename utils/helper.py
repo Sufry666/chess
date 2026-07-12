@@ -4,12 +4,21 @@ from pathlib import Path
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 try:
     import config # type: ignore
+    import ui.renderer as renderer #type: ignore
 except ImportError:
     print("Config module not found. Please ensure that config.py is in the same directory as helper.py.")
-def index_to_position(row, col):
-    x = config.BOARD_COORDINATE[0] + col * config.CELL_SIZE
-    y = config.BOARD_COORDINATE[1] + row * config.CELL_SIZE
-    return (x, y)
+
+
+'''def index_to_position(row, col, game = None):
+    if not game:
+        x = config.BOAR_COORDINATE[0] + col * config.CELL_SIZE
+        y = config.BOARD_COORDINATE[1] + row * config.CELL_SIZE
+        return (x, y)
+    board_coordinate = game.renderer.data["board_coordinate"]
+    cell_size = game.renderer.data["cell_size"]
+    x = board_coordinate[0] + col * cell_size
+    y = board_coordinate[1] + row * cell_size
+    return (x, y)'''
 
 def get_root_dir():
     current = Path(__file__).resolve()
