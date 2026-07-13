@@ -13,7 +13,7 @@ class knight(Piece):
         super().__init__(color, name, position)  # Initialize the base class with color, name, and position
         self.value = 1000
         self.vectors = [(1, 2), (-1, 2), (2, 1), (2, -1), (-2, 1), (-2, -1), (-1, -2), (1, -2)]  # All possible moves for a king
-    
+        
     def get_possible_moves_origin(self, board_present):
         possible_moves = []
         for vector in self.vectors:

@@ -32,6 +32,7 @@ class renderer:
         }
         self.screen = pg.display.set_mode((self.screen_width,  self.screen_height ),pg.RESIZABLE)
         self.point_image = self.get_images(config.POSSIBLE_DESTINATION_IMAGE_PATH)
+        self.target_image = self.get_images(config.TARGET_IMAGE_PATH)
         self.font_for_init = self.get_fonts(config.FONT_PATH, 40)
         self.font_for_game = self.get_fonts(config.FONT_PATH, 18)
         
@@ -77,6 +78,17 @@ class renderer:
             for piece in row:
                 if piece != 0:
                     piece.generate_image(self.data["cell_size"])
+        
+        game.king_black.get_chessmated_image(self.data["cell_size"])
+        game.king_white.get_chessmated_image(self.data["cell_size"])
+        if game.king_state == "white_chessmated":
+            game.king_white.chessmated_image_handle()
+        elif game.king_state == "black_chessmated":
+            game.king_black.chessmated_image_handle()
+        else:
+            pass
+            
+                    
         if len(game.records) != 0:
             for move in game.records:
                 for _,piece_captured,_,_ in move.moves:
@@ -155,12 +167,17 @@ class renderer:
 
     
     def show_possible_destination(self, start_position, vectors, board):
-
+        row, col = start_position
+        
         destinations = helper.get_destinations_by_vectors(start_position, vectors)
         
         for destination in destinations:
             position = board.get_position_inscreen(destination[0], destination[1])
-            self.logical_surface.blit(self.point_image, position)
+            if board.board_list[destination[0]][destination[1]] == 0:
+                self.logical_surface.blit(self.point_image, position)
+                continue
+            if board.board_list[destination[0]][destination[1]].color != board.board_list[row][col]:
+                self.logical_surface.blit(self.target_image, position)
 
     '''def cover_highlight(self, rect):
         self.logical_surface.fill((0, 0, 0, 0))

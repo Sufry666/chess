@@ -14,7 +14,7 @@ class rook(Piece):
         super().__init__(color, name, position)  # Initialize the base class with color, name, and position
         self.value = 3  
         self.vectors = [(1, 0), (-1, 0), (0, 1), (0, -1)]  # All possible moves for a bishop
-
+        
     def get_possible_moves_origin(self, board_present):
         possible_moves = []
         for vector in self.vectors:

@@ -77,6 +77,9 @@ def move_animation(game):
 
 
 def handle_animation(game):
+    if not game.animation_state:
+        game.state = "input_getting"
+        return
     if not game.anim and game.animation_state == "move":
         game.anim = move_animation(game)
         
@@ -99,10 +102,12 @@ def handle_animation(game):
             game.move_temp = None
             game.anim = None
             game.state = "input_getting"
+            game.animation_state = None
         else:
             game.anim = None
             game.state = "input_getting"
             game.PieceToMove.position_inscreen = None
+            game.animation_state = None
 
 
 def main():
