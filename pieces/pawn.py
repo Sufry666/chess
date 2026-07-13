@@ -16,7 +16,7 @@ class pawn(Piece):
         self.vectors_ = [(1, 1), (1, -1)]
         self.direction = 1 if self.color == 'black' else -1
         self.row_condition = 4 if self.color == 'black' else 3 #该值表示吃过路兵所需要在的行数
-    
+        
     def get_possible_moves_origin(self, board_present):
         possible_moves = []
         for vector in self.vectors:

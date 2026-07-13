@@ -17,7 +17,7 @@ class Piece(ABC):
         self.position = position
         self.position_inscreen = None
         self.moved_times = 0 #棋子被移动过的次数
-        self.generate_image(config.CELL_SIZE) 
+        self.generate_image(config.CELL_SIZE)
         self.is_moved_latest = False #该值表示本棋子是否为双方所有棋子中最新被移动的棋子
         
     @abstractmethod
@@ -42,7 +42,7 @@ class Piece(ABC):
     def generate_image(self, cell_size):
         image_path = self.get_image_path()
         if image_path:
-            self.image = pg.image.load(image_path)
+            self.image = pg.image.load(image_path).convert_alpha()
             self.image = pg.transform.scale(self.image, (cell_size, cell_size))
             
     

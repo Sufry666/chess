@@ -1,6 +1,7 @@
 
 import sys
 import os
+import pygame as pg
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 try:    
     from pieces.piece import Piece # type: ignore
@@ -14,7 +15,7 @@ class king(Piece):
         super().__init__(color, name, position)  # Initialize the base class with color, name, and position
         self.value = 1000  # Assign a high value to the king
         self.vectors = [(1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)]  # All possible moves for a king
-
+        self.get_chessmated_image(config.CELL_SIZE)
     def get_possible_moves_origin(self, board_present):
         possible_moves = []
         for vector in self.vectors:
@@ -46,7 +47,7 @@ class king(Piece):
         if self.moved_times == 0 and board_present[self.position[0]][0] != 0 and board_present[self.position[0]][0].moved_times == 0:
             if board_present[self.position[0]][5] == 0 and board_present[self.position[0]][6] == 0:
                 judge = True
-                for i in range(2, 5):
+                for i in range(4, 7):
                     if core.rules.isChessmate(board_present, (self.position[0],i), self.color):
                         judge = False
                         break
@@ -62,10 +63,25 @@ class king(Piece):
         else:
             image_path = root_dir / config.BLACK_KING_PIECE_IMAGE_PATH
             return image_path
+    
+    def get_chessmated_image(self,cell_size):
+        root_dir = helper.get_root_dir()
+        if self.color == "white":
+            image_path = root_dir / config.WHITE_KING_CHESSMATED_IMAGE_PATH
+        else:
+            image_path = root_dir / config.BLACK_KING_CHESSMATED_IMAGE_PATH
+        self.image_chessmated = pg.image.load(image_path).convert_alpha()
+        self.image_chessmated = pg.transform.scale(self.image_chessmated, (cell_size, cell_size))
+    
+    def chessmated_image_handle(self):
+        self.image_chessmated, self.image = self.image, self.image_chessmated
+    
     def __str__(self):
         return "K" if self.color == "white" else "k"
     def __repr__(self):
         return self.__str__()
+
+
 def main():
     row, col = 0,0 
     king_piece = king("white", position=(row, col))

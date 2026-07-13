@@ -17,8 +17,9 @@ try:
     from core.move import move # type: ignore
     import ui.animations as animations #type: ignore
     from ui.menu import menu # type: ignore
+    import core.rules as rules #type: ignore
 except ImportError as e:
-    print(f"ImportError: {e}. Please ensure game_state.py")
+    print(f"ImportError: {e}. Please ensure self_state.py")
     sys.exit(1)
 class game:
     def __init__(self, size = 8):
@@ -29,6 +30,10 @@ class game:
         self.records = []
         self.board = Board()
         self.menu = menu()
+        self.renderer = renderer()
+        
+    def initialize(self):
+        
         self.rook_black_left = rook("black")
         self.rook_black_right = rook("black")
         self.knight_black_left = knight("black")
@@ -51,8 +56,6 @@ class game:
         self.pawn_white = [0 for _ in range(8)]
         for i in range(8):
             self.pawn_white[i] = pawn("white")
-    def initialize(self):
-        self.renderer = renderer()
         self.board.board_list[0][4] = self.king_black
         self.board.board_list[0][3] = self.queen_black
         self.board.board_list[0][0] = self.rook_black_left
@@ -89,6 +92,7 @@ class game:
         self.move_temp = None
         self.highlight_button = None   #待优化
         #self.highlight_piece = None#待优化
+        self.king_state = "unchessmated"
         self.pos = None
         self.running = True
         self.state = "input_getting"
@@ -102,6 +106,8 @@ class game:
             self.pos = pg.mouse.get_pos()
             self.pos = ((self.pos[0] - self.renderer.data["logical_surface_coordinate"][0])
                         , (self.pos[1] - self.renderer.data["logical_surface_coordinate"][1]))
+            
+            self.handle_chessmate()
             if self.state == "animation":
                 animations.handle_animation(self)
 
@@ -123,6 +129,36 @@ class game:
             pg.display.flip()
             self.renderer.clock.tick(config.FPS)    
         pg.quit()
+    def handle_chessmate(self):
+        if self.animation_state == "move":
+            return
+        if self.menu.state != "gaming":
+            return 
+        if self.king_state == "unchessmated" and rules.isChessmate(self.board.board_list, self.king_white.position):
+            self.king_white.chessmated_image_handle()
+            self.state = "animation"
+            self.animation_state = "highlight"
+            self.PieceToMove = self.king_white
+            self.king_state = "white_chessmated"
+
+        if self.king_state == "unchessmated" and rules.isChessmate(self.board.board_list, self.king_black.position):
+            self.king_black.chessmated_image_handle()
+            self.state = "animation"
+            self.animation_state = "highlight"
+            self.PieceToMove = self.king_black
+            self.king_state = "black_chessmated"
+
+        if self.king_state == "white_chessmated" and not rules.isChessmate(self.board.board_list, self.king_white.position):
+            self.king_white.chessmated_image_handle()
+            self.king_state = "unchessmated"
+            self.renderer.render_handle(self)
+        
+        if self.king_state == "black_chessmated" and not rules.isChessmate(self.board.board_list, self.king_black.position):
+            self.king_black.chessmated_image_handle()
+            self.king_state = "unchessmated"
+            self.renderer.render_handle(self)
+
+        
 def test():
     game1 = game()
     

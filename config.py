@@ -32,4 +32,6 @@ WHITE_BISHOP_PIECE_IMAGE_PATH = "data/images/bishop_white.png"
 WHITE_QUEEN_PIECE_IMAGE_PATH = "data/images/queen_white.png"
 WHITE_KING_PIECE_IMAGE_PATH = "data/images/king_white.png"
 POSSIBLE_DESTINATION_IMAGE_PATH = "data/images/point.png"
-
+WHITE_KING_CHESSMATED_IMAGE_PATH = "data/images/king_white_chessmated.png"
+BLACK_KING_CHESSMATED_IMAGE_PATH = "data/images/king_black_chessmated.png"
+TARGET_IMAGE_PATH = "data/images/target.png"

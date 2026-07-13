@@ -7,6 +7,7 @@ try:
     import core.board as board # type: ignore
     import utils.helper as helper # type: ignore
     from core.move import move #type: ignore
+    import core.rules as rules #type: ignore
 except ImportError as e:
     print(f"ImportError: {e}. Please ensure input_handler.py")
     sys.exit(1)
@@ -64,9 +65,7 @@ def handle_click_inboard(game):
             game.animation_state = "highlight"
             return
         game.move_temp = move()
-        if len(game.records) != 0:
-            for piece,_,_,_ in game.records[-1].moves:
-                piece.is_moved_latest = False # 移动前更新上一个被移动的棋子的 最后移动的棋子 这一数据
+        
         if game.board.board_list[row][col] != 0: # 此情况为终点有子 必定为正常吃子
             game.move_temp.add_move(vector = game.VectorTodo, piece = game.PieceToMove, piece_captured = game.board.board_list[row][col])
         elif game.PieceToMove.name == "pawn" and game.VectorTodo[1] != 0: # 由于前一种情况为终点有子 故此处及后续情况均为终点无子 若被移动的棋子为pawn（此if的条件1）且移动方向不为竖直 即col坐标改变（此if的条件2） 说明该移动一定是吃过路兵
@@ -86,7 +85,9 @@ def handle_click_inboard(game):
         game.PieceToMove.is_moved_latest = True #移动后更新 最后移动的棋子 这一数据
         game.records.append(game.move_temp)
         #print(game.records) # 加入窗口显示
-        
+        if len(game.records) > 1:
+            for piece,_,_,_ in game.records[-2].moves:
+                piece.is_moved_latest = False # 移动前更新上一个被移动的棋子的 最后移动的棋子 这一数据
         
         game.PieceToMove = None
         game.state = "animation"
@@ -114,7 +115,10 @@ def handle_click_inmenu(game):
             for piece,_,_,_ in game.move_temp.moves:
                 piece.is_moved_latest = False # 悔棋前将回退步中移动的棋子的 最后移动的棋子 这一数据更新为False
                 piece.moved_times -= 1
-                piece.is_moved_latest = True #悔棋后将此时的最后移动操作中被移动的棋子的 最后移动的棋子 这一数据更新为True
+                
+            if len(game.records) > 0:
+                for piece,_,_,_ in game.records[-1].moves:
+                    piece.is_moved_latest = True #悔棋后将此时的最后移动操作中被移动的棋子的 最后移动的棋子 这一数据更新为True
             game.move_temp.isRetract = True
             
             
@@ -145,6 +149,7 @@ def handle_wait(game):
             game.renderer.print_menu(game.menu.return_button_present(), game.menu.state)
             game.highlight_button = None
             return'''
+
     if game.menu.rect.collidepoint(game.pos):
         handle_wait_inmenu(game)
         return
@@ -210,6 +215,7 @@ def handle_wait_inmenu(game):
 
 
 def handle_wait_inboard(game):
+
     if not game.PieceToMove:
         if not get_mouse_coordinate_in_board(game.board.rect_list, game.pos):
             return
@@ -231,3 +237,29 @@ def handle_wait_inboard(game):
             game.renderer.render_handle(game)
             game.PieceToMove = None
             return 
+    
+
+'''def handle_chessmate(game, state):
+    if state == "unchessmated" and rules.isChessmate(game.board.board_list, game.king_white.position):
+        game.king_white.chessmated_image_handle()
+        game.state = "animation"
+        game.animation_state = "highlight"
+        game.PieceToMove = game.king_white
+        game.king_state = "white_chessmated"
+        return state
+    if state == "unchessmated" and rules.isChessmate(game.board.board_list, game.king_black.position):
+        game.king_black.chessmated_image_handle()
+        game.state = "animation"
+        game.animation_state = "highlight"
+        game.PieceToMove = game.king_black
+        game.king_state = "black_chessmated"
+        return state
+    if state == "white_chessmated" and not rules.isChessmate(game.board.board_list, game.king_white.position):
+        game.king_white.chessmated_image_handle()
+        game.king_state = "unchessmated"
+        return state
+    if state == "black_chessmated" and not rules.isChessmate(game.board.board_list, game.king_black.position):
+        game.king_black.chessmated_image_handle()
+        game.king_state = "unchessmated"
+        return state
+    return state'''
